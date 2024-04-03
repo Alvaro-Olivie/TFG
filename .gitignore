@@ -4,3 +4,4 @@
 *.csv
 *.pdf
 *.mp4
+.conda
