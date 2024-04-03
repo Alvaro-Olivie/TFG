@@ -32,6 +32,7 @@ def plot_column(df, column):
         plt.savefig('DataPreprocessing/' + i + '_Time.png')
 
 def plot_distribution(df, column):
+    df.drop_duplicates(subset='ISIN', keep='first', inplace=True)
     for i in column:
         Fig, ax = plt.subplots(figsize=(10, 4))
         df[i].hist(ax=ax)
