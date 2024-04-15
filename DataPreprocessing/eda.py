@@ -31,6 +31,19 @@ def plot_column(df, column):
         ax.set_title(i + ' Time Series')
         plt.savefig('DataPreprocessing/' + i + '_Time.png')
 
+def plot_categorical_distribution(df, column):
+    df.drop_duplicates(subset='ISIN', keep='first', inplace=True)
+    for i in column:
+        Fig, ax = plt.subplots(figsize=(10, 4))
+        df[i].hist(ax=ax)
+        ax.set_ylabel('Frequency')
+        ax.set_xlabel(i)
+        ax.set_xticks(range(len(df[i].unique())))
+        ax.set_xticklabels(df[i].unique(), rotation=60)
+        ax.set_title(i + ' Distribution')
+        plt.tight_layout()
+        plt.savefig('DataPreprocessing/' + i + '_Distribution.png')
+
 def plot_distribution(df, column):
     df.drop_duplicates(subset='ISIN', keep='first', inplace=True)
     for i in column:
@@ -39,11 +52,13 @@ def plot_distribution(df, column):
         ax.set_ylabel('Frequency')
         ax.set_xlabel(i)
         ax.set_title(i + ' Distribution')
+        plt.tight_layout()
         plt.savefig('DataPreprocessing/' + i + '_Distribution.png')
 
 if __name__ == '__main__':
     df = pd.read_csv('bonds.csv', low_memory=False)
     #plot_column(df, ['Price', 'R1M','R3M','R6M','R12M'])
     #plot_seasonal(df)
-    plot_distribution(df, ['Index Rating (String)','BCLASS 2','Cpn'])
+    #plot_categorical_distribution(df, ['Index Rating (String)','BCLASS 2','Payment Rank'])
+    plot_distribution(df, ['Cpn', 'Maturity Date'])
 

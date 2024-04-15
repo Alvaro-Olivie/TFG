@@ -28,8 +28,9 @@ def clean_data(data):
     data = data.drop(columns=['Unnamed: 0'])
     data['Cpn'] = data['Cpn'].fillna(data['Coupon'])
     data = data.drop(columns=['Coupon'])
-    return data.rename(columns={'Maturity.1': 'Maturity Date'})
-
+    data = data.rename(columns={'Maturity.1': 'Maturity Date'})
+    data = data.drop(columns=['Description', 'Ccy', 'Issuer', 'Maturity Date'])
+    return data
 def calculate_returns(data):
     data = data.sort_values(['ISIN', 'Date'])
     data['R1M'] = data.groupby('ISIN')['Price'].pct_change()
