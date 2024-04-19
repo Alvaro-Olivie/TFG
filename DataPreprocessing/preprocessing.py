@@ -34,9 +34,13 @@ def clean_data(data):
 def calculate_returns(data):
     data = data.sort_values(['ISIN', 'Date'])
     data['R1M'] = data.groupby('ISIN')['Price'].pct_change()
+    data['R1M'] = data.groupby('ISIN')['R1M'].shift(-1)
     data['R3M'] = data.groupby('ISIN')['Price'].pct_change(3)
+    data['R3M'] = data.groupby('ISIN')['R3M'].shift(-3)
     data['R6M'] = data.groupby('ISIN')['Price'].pct_change(6)
+    data['R3M'] = data.groupby('ISIN')['R3M'].shift(-6)
     data['R12M'] = data.groupby('ISIN')['Price'].pct_change(12)
+    data['R3M'] = data.groupby('ISIN')['R3M'].shift(-12)
     return data.replace([np.inf, -np.inf], np.nan).dropna()
 
 def main():

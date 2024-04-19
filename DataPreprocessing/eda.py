@@ -57,8 +57,8 @@ def plot_distribution(df, column):
 
 if __name__ == '__main__':
     df = pd.read_csv('bonds.csv', low_memory=False)
-    #plot_column(df, ['Price', 'R1M','R3M','R6M','R12M'])
-    #plot_seasonal(df)
-    #plot_categorical_distribution(df, ['Index Rating (String)','BCLASS 2','Payment Rank'])
-    plot_distribution(df, ['Cpn', 'Maturity Date'])
+    plot_column(df, ['Price', 'R1M','R3M','R6M','R12M'])
+    plot_seasonal(df)
+    plot_categorical_distribution(df, ['Index Rating (String)','BCLASS 2','Payment Rank'])
+    plot_distribution(df, ['Cpn', 'Maturity'])
 
