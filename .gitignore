@@ -1,7 +1,7 @@
 *.xlsb
 *.xlsx
 *.docs
-*.csv
+bonds.csv
 *.pdf
 *.mp4
 .conda

@@ -4,15 +4,16 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import GridSearchCV
 
 data = pd.read_csv('bonds.csv', low_memory=False)
 
-def xgboost(X, y):
+def xgboost(X, y, params):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     print("  starting to train model...")
     
-    model = XGBRegressor(n_estimators=100, random_state=42, n_jobs=6)
+    model = XGBRegressor(n_estimators=100, random_state=42, n_jobs=6, **params)
 
     
     model.fit(X_train, y_train)
@@ -41,6 +42,29 @@ def xgboost(X, y):
     
     return mse, r2, hit_ratio
 
+def best_params(X, y):
+    X_subset = X.sample(frac=0.1, random_state=42)
+    y_subset = y[X_subset.index]
+    X_train, X_test, y_train, y_test = train_test_split(X_subset, y_subset, test_size=0.2, random_state=42)
+    
+    print("  starting to train model...")
+    
+    model = XGBRegressor()
+    
+    params = {
+        'n_estimators': [100, 200, 300],
+        'max_depth': [3, 4, 5, 6],
+        'learning_rate': [0.1, 0.01, 0.001],
+        'booster': ['gbtree', 'gblinear', 'dart']
+    }
+    
+    grid = GridSearchCV(model, params, n_jobs=6, cv=5)
+    grid.fit(X_train, y_train)
+    
+    print("  best params: ", grid.best_params_)
+    
+    return grid.best_params_
+
 if __name__ == "__main__":
     returns = ['R1M', 'R3M', 'R6M', 'R12M']
     results = pd.DataFrame(columns=['Target', 'MSE', 'R2', 'Hit Ratio'])
@@ -49,6 +73,7 @@ if __name__ == "__main__":
         print("Starting to process " + i)
         y = data[i]
         x = data.select_dtypes(include='number').drop(returns, axis=1)
-        mse, r2, hit_ratio = xgboost(x, y)
+        params = best_params(x, y)
+        mse, r2, hit_ratio = xgboost(x, y, params)
         results = results._append({'Target': i, 'MSE': mse, 'R2': r2, 'Hit Ratio': hit_ratio}, ignore_index=True)
     results.to_csv('XGBoost/results.csv', index=False)
