@@ -30,7 +30,19 @@ def clean_data(data):
     data = data.drop(columns=['Coupon'])
     data = data.rename(columns={'Maturity.1': 'Maturity Date'})
     data = data.drop(columns=['Description', 'Ccy', 'Issuer', 'Maturity Date'])
+    data.rename(columns={'Yield to Maturity': 'YTM'}, inplace=True)
     return data
+
+def categorical_to_numeric(data):
+    data = data[data['Payment Rank'].str.contains('1st lien', na=False)]
+    data = data.drop(columns=['Payment Rank'])
+    data['Index Rating (String)'] = data['Index Rating (String)'].replace(['A2', 'A3', 'BAA3', 'BAA1', 'BAA2', 'AA3', 'A1', 'AA2',  'AA1', 'AAA'], 'Investment Grade')
+    data['Index Rating (String)'] = data['Index Rating (String)'].replace(['BA3', 'B3','BA1', 'B1', 'BA2', 'CAA1', 'CAA2', 'CAA3', 'NR', 'CA', 'D', 'C', 'B2'], 'High Yield')
+    data['Index Rating (String)'] = data['Index Rating (String)'].map({'Investment Grade': 1, 'High Yield': 0})
+    data = data.rename(columns={'Index Rating (String)': 'Index Rating'})
+    data['BCLASS 2'] = data['BCLASS 2'].map({'FINANCIAL_INSTITUTIONS': 1, 'INDUSTRIAL': 2, 'UTILITY': 3})
+    return data
+
 def calculate_returns(data):
     data = data.sort_values(['ISIN', 'Date'])
     data['R1M'] = data.groupby('ISIN')['Price'].pct_change()
@@ -57,6 +69,7 @@ def main():
         print(i)
     data = pd.concat(dfs, ignore_index=True)
     data = clean_data(data)
+    data = categorical_to_numeric(data)
     data = calculate_returns(data)
 
     data.to_csv('bonds.csv', index=False)

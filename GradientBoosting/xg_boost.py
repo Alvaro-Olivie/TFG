@@ -13,7 +13,7 @@ def xgboost(X, y, params):
 
     print("  starting to train model...")
     
-    model = XGBRegressor(n_estimators=100, random_state=42, n_jobs=6, **params)
+    model = XGBRegressor(**params)
 
     
     model.fit(X_train, y_train)
@@ -37,7 +37,8 @@ def xgboost(X, y, params):
     plt.barh(X.columns, coefs, color="r", align="center")
     plt.xlabel("Feature importance")
     plt.ylabel("Feature")
-    plt.savefig("XGBoost/feature_importances_" + y.name + ".png", format="png")
+    plt.tight_layout()
+    plt.savefig("GradientBoosting/feature_importances_" + y.name + ".png", format="png")
     plt.close()
     
     return mse, r2, hit_ratio
@@ -49,13 +50,14 @@ def best_params(X, y):
     
     print("  starting to train model...")
     
-    model = XGBRegressor()
+    model = XGBRegressor(random_state=42, n_jobs=-1)
     
     params = {
         'n_estimators': [100, 200, 300],
-        'max_depth': [3, 4, 5, 6],
         'learning_rate': [0.1, 0.01, 0.001],
-        'booster': ['gbtree', 'gblinear', 'dart']
+        'booster': ['gbtree', 'gblinear', 'dart'],
+        'max_depth': [3, 5, 7],
+        'gamma': [0, 0.1, 0.2]
     }
     
     grid = GridSearchCV(model, params, n_jobs=6, cv=5)

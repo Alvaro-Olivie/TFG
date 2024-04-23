@@ -6,8 +6,6 @@ from sklearn.linear_model import LinearRegression, Lasso, ElasticNet, Ridge
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 
-data = pd.read_csv('bonds.csv', low_memory=False)
-
 def linear_regression(X, y):
     X_scaled = preprocessing.scale(X)
     X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
@@ -24,11 +22,12 @@ def linear_regression(X, y):
 
     coefs = pd.Series(abs(model.coef_))
 
-    plt.figure()
+    plt.figure(figsize=(12, 8))
     plt.title("Feature importances " + y.name + " returns")
-    plt.barh(X.columns, coefs, color="r", align="center")
+    plt.barh(X.columns, coefs, color="b", align="center")
     plt.xlabel("Feature importance")
     plt.ylabel("Feature")
+    plt.tight_layout() 
     plt.savefig("Regression/feature_importances_" + y.name + ".png", format="png")
     plt.close()
 
@@ -88,6 +87,7 @@ def ridge_regression(X, y_penalized):
 
 
 if __name__ == '__main__':
+    data = pd.read_csv('bonds.csv', low_memory=False)
     returns = ['R1M', 'R3M', 'R6M', 'R12M']
     results = pd.DataFrame(columns=['Target', 'MSE', 'R2', 'Hit Ratio'])
 

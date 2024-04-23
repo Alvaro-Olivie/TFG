@@ -10,12 +10,10 @@ from sklearn.model_selection import GridSearchCV
 
 data = pd.read_csv('bonds.csv', low_memory=False)
 
-def random_forest(X, y, params):
+def random_forest(X, y, model):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     print("  starting to train model...")
-    
-    model = RandomForestRegressor(random_state=42, n_jobs=6, **params)
 
     model.fit(X_train, y_train)
 
@@ -38,6 +36,7 @@ def random_forest(X, y, params):
     plt.barh(X.columns, coefs, color="r", align="center")
     plt.xlabel("Feature importance")
     plt.ylabel("Feature")
+    plt.tight_layout()
     plt.savefig("RandomForest/feature_importances_" + y.name + ".png", format="png")
     plt.close()
     
@@ -66,6 +65,7 @@ def decision_tree(X, y):
 
     plt.figure(figsize=(17, 10))
     tree.plot_tree(model, feature_names=X.columns, filled=True, rounded=True, fontsize=11, class_names=True, proportion=True)
+    plt.tight_layout()
     plt.savefig("RandomForest/decision_tree_" + y.name + ".png", format="png", dpi=300, bbox_inches='tight')
     plt.close()
 
@@ -73,22 +73,22 @@ def decision_tree(X, y):
 
     return mse, r2, hit_ratio
 
-def best_params(X, y):
+def best_estimator(X, y):
     X_subset = X.sample(frac=0.1, random_state=42)
     y_subset = y[X_subset.index]
     X_train, X_test, y_train, y_test = train_test_split(X_subset, y_subset, test_size=0.2, random_state=42)
 
-    print("  starting to train model...")
+    print("  looking for best model...")
     
     params_grid = {
         'n_estimators': [100, 200, 300],
-        'max_features': ['auto', 'sqrt', 'log2'],
+        'max_features': ['sqrt', 'log2'],
         'max_depth': [3, 5, 7, 9],
         'min_samples_split': [2, 4, 6, 8],
         'min_samples_leaf': [1, 2, 3, 4]
     }
 
-    model = RandomForestRegressor(random_state=42, n_jobs=6)
+    model = RandomForestRegressor(random_state=42, n_jobs=-1)
 
     grid_search = GridSearchCV(estimator=model, param_grid=params_grid, cv=3, scoring='neg_mean_squared_error')
     grid_search.fit(X_train, y_train)
@@ -107,8 +107,8 @@ if __name__ == "__main__":
         print("Starting to process " + i)
         y = data[i]
         x = data.select_dtypes(include='number').drop(returns, axis=1)
-        params = best_params(x, y)
-        mse, r2, hit_ratio = random_forest(x, y, params)
+        model = best_estimator(x, y)
+        mse, r2, hit_ratio = random_forest(x, y, model)
         results = results._append({'Target': i, 'MSE': mse, 'R2': r2, 'Hit Ratio': hit_ratio}, ignore_index=True)
     results.to_csv('RandomForest/results_rf.csv', index=False)
 
