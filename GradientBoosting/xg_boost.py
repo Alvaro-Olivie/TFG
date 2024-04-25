@@ -40,6 +40,9 @@ def xgboost(X, y, params):
     plt.tight_layout()
     plt.savefig("GradientBoosting/feature_importances_" + y.name + ".png", format="png")
     plt.close()
+
+    y_pred = pd.Series(y_pred)
+    y_pred.to_csv('GradientBoosting/y_pred_'+y.name+'.csv', index=False)
     
     return mse, r2, hit_ratio
 

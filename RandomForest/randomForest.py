@@ -39,6 +39,9 @@ def random_forest(X, y, model):
     plt.tight_layout()
     plt.savefig("RandomForest/feature_importances_" + y.name + ".png", format="png")
     plt.close()
+
+    y_pred = pd.Series(y_pred)
+    y_pred.to_csv('RandomForest/y_pred_'+y.name+'.csv', index=False)
     
     return mse, r2, hit_ratio
 

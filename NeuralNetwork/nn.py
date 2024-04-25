@@ -1,9 +1,12 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.neural_network import MLPRegressor
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 from sklearn.metrics import mean_squared_error, r2_score
+
+import matplotlib.pyplot as plt
 
 
 def nn(X, y):
@@ -11,13 +14,21 @@ def nn(X, y):
 
     print("  starting to train model...")
     
-    model = MLPRegressor(hidden_layer_sizes=(100, 50), random_state=42, max_iter=1000)
+    model = Sequential()
+    model.add(Dense(64, activation='relu', input_shape=(X_train.shape[1],)))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(1))
     
-    model.fit(X_train, y_train)
+    model.compile(optimizer='adam', loss='mean_squared_error')
+    
+    model.fit(X_train, y_train, epochs=100, verbose=0)
 
     print("  model trained")
     
     y_pred = model.predict(X_test)
+
+    # y_pred has shape (n, 1), we need to reshape it to (n,)
+    y_pred = y_pred.reshape(-1)
 
     print("  model predicted")
     
@@ -26,6 +37,9 @@ def nn(X, y):
     hit_ratio = (y_test * y_pred > 0).mean()
 
     print("  metrics calculated")
+
+    y_pred = pd.Series(y_pred)
+    y_pred.to_csv('NeuralNetwork/y_pred_'+y.name+'.csv', index=False)
     
     return mse, r2, hit_ratio
 
