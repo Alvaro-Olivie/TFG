@@ -40,7 +40,8 @@ def svm_model(X, y):
     hit_ratio = (y_test * y_pred > 0).mean()
 
     print("  metrics calculated")
-
+    print(y_test.shape)
+    print(y_pred.shape)
     y_pred = pd.Series(y_pred)
     y_pred.to_csv('SVM/y_pred_'+y.name+'.csv', index=False)
     

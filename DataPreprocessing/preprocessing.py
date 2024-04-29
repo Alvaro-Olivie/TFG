@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 def read_excel_sheets(path):
     # Open the excel file
@@ -55,6 +56,28 @@ def calculate_returns(data):
     data['R3M'] = data.groupby('ISIN')['R3M'].shift(-12)
     return data.replace([np.inf, -np.inf], np.nan).dropna()
 
+def plot_categorical_distribution(df, column):
+    df.drop_duplicates(subset='ISIN', keep='first', inplace=True)
+    for i in column:
+        Fig, ax = plt.subplots(figsize=(10, 4))
+        df[i].hist(ax=ax)
+        ax.set_ylabel('Frequency')
+        ax.set_xlabel(i)
+        ax.set_xticks(range(len(df[i].unique())))
+        ax.set_xticklabels(sorted(df[i].unique()), rotation=60)
+        ax.set_title(i + ' Distribution')
+        plt.tight_layout()
+        plt.savefig('DataPreprocessing/' + i + '_Distribution.png')
+
+def feature_correlation(df):
+    correlation = df.corr()
+    fig, ax = plt.subplots(figsize=(10, 8))
+    cax = ax.matshow(correlation, cmap='coolwarm')
+    fig.colorbar(cax)
+    plt.xticks(range(len(correlation.columns)), correlation.columns, rotation=90)
+    plt.yticks(range(len(correlation.columns)), correlation.columns)
+    plt.savefig('DataPreprocessing/correlation_matrix.png')
+
 def main():
     dfs = []
     xc = ["Data\LUACTRUU Index 2018-2020.xlsx", 
@@ -69,10 +92,16 @@ def main():
         print(i)
     data = pd.concat(dfs, ignore_index=True)
     data = clean_data(data)
+    plot_categorical_distribution(data, ['Index Rating (String)', 'BCLASS 2', 'Payment Rank'])
     data = categorical_to_numeric(data)
     data = calculate_returns(data)
+    feature_correlation(data.drop(columns=['ISIN', 'Date']))
+
+    #high correlation with YTW, Par Val and OAD
+    data = data.drop(columns=['YTW', 'Par Val', 'OAD'])
 
     data.to_csv('bonds.csv', index=False)
 
 if __name__ == "__main__":
     main()
+    

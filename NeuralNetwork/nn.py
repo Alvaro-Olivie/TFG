@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, Dropout
 from sklearn.metrics import mean_squared_error, r2_score
 
 import matplotlib.pyplot as plt
@@ -16,7 +16,9 @@ def nn(X, y):
     
     model = Sequential()
     model.add(Dense(64, activation='relu', input_shape=(X_train.shape[1],)))
+    model.add(Dropout(0.2))
     model.add(Dense(32, activation='relu'))
+    model.add(Dropout(0.2))
     model.add(Dense(1))
     
     model.compile(optimizer='adam', loss='mean_squared_error')
