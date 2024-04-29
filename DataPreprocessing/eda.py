@@ -31,9 +31,9 @@ def plot_column(df, column):
         ax.set_title(i + ' Time Series')
         plt.savefig('DataPreprocessing/' + i + '_Time.png')
 
-def plot_distribution(df, column):
+def plot_distribution(df):
     df.drop_duplicates(subset='ISIN', keep='first', inplace=True)
-    for i in column:
+    for i in df.columns:
         Fig, ax = plt.subplots(figsize=(10, 4))
         df[i].hist(ax=ax)
         ax.set_ylabel('Frequency')
@@ -42,12 +42,19 @@ def plot_distribution(df, column):
         plt.tight_layout()
         plt.savefig('DataPreprocessing/' + i + '_Distribution.png')
 
-
+def box_plots(df):
+    for i in df.columns:
+        Fig, ax = plt.subplots(figsize=(10, 4))
+        df.boxplot(column=i, ax=ax)
+        ax.set_ylabel(i)
+        ax.set_title(i + ' Boxplot')
+        plt.tight_layout()
+        plt.savefig('DataPreprocessing/' + i + '_Boxplot.png')
 
 if __name__ == '__main__':
     df = pd.read_csv('bonds.csv', low_memory=False)
-    plot_column(df, ['Price', 'R1M','R3M','R6M','R12M'])
-    plot_seasonal(df)
-    plot_distribution(df, ['Cpn', 'Maturity', 'Index Rating', 'R1M', 'R3M', 'R6M', 'R12M'])
-
+    #plot_column(df, ['Price', 'R1M','R3M','R6M','R12M'])
+    #plot_seasonal(df)
+    plot_distribution(df.drop(columns=['Date']))
+    box_plots(df.drop(columns=['ISIN', 'Date']))
 
