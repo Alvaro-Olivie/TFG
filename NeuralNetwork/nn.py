@@ -65,6 +65,13 @@ def nn(X, y):
     plt.savefig('NeuralNetwork/r2_'+ y.name +'.png')
     plt.close()
 
+    plt.scatter(y_test, y_pred)
+    plt.xlabel('True Values')
+    plt.ylabel('Predictions')
+    plt.title('True Values vs Predictions for ' + y.name)
+    plt.savefig('NeuralNetwork/scatter_'+ y.name +'.png')
+    plt.close()
+
     y_pred = pd.Series(y_pred)
     y_pred.to_csv('NeuralNetwork/y_pred_'+y.name+'.csv', index=False)
     
@@ -86,3 +93,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

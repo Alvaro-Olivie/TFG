@@ -39,6 +39,13 @@ def xgboost(X, y, params):
     plt.savefig("GradientBoosting/feature_importances_" + y.name + ".png", format="png")
     plt.close()
 
+    plt.scatter(y_test, y_pred)
+    plt.xlabel('True Values')
+    plt.ylabel('Predictions')
+    plt.title('True Values vs Predictions for ' + y.name)
+    plt.savefig('GradientBoosting/scatter_'+ y.name +'.png')
+    plt.close()
+
     y_pred = pd.Series(y_pred)
     y_pred.to_csv('GradientBoosting/y_pred_'+y.name+'.csv', index=False)
     

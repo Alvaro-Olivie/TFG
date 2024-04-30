@@ -5,6 +5,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import pandas as pd
 from sklearn.model_selection import GridSearchCV
 from sklearn import preprocessing
+import matplotlib.pyplot as plt
 
 def svm_model(X, y):
     X_scaled = preprocessing.scale(X)
@@ -38,6 +39,13 @@ def svm_model(X, y):
     hit_ratio = (y_test * y_pred > 0).mean()
 
     print("  metrics calculated")
+
+    plt.scatter(y_test, y_pred)
+    plt.xlabel('True Values')
+    plt.ylabel('Predictions')
+    plt.title('True Values vs Predictions for ' + y.name)
+    plt.savefig('SVM/scatter_'+ y.name +'.png')
+    plt.close()
 
     y_pred = pd.Series(y_pred)
     y_pred.to_csv('SVM/y_pred_'+y.name+'.csv', index=False)

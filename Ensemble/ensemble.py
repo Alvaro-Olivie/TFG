@@ -58,6 +58,14 @@ def nn_ensamble(X, y):
     plt.savefig('Ensemble/r2_'+ y.name +'.png')
     plt.close()
 
+    plt.scatter(y_test, y_pred)
+    plt.xlabel('True Values')
+    plt.ylabel('Predictions')
+    plt.title('True Values vs Predictions for ' + y.name)
+    plt.savefig('Ensemble/scatter_'+ y.name +'.png')
+    plt.close()
+
+
     return mse, r2, hit_ratio
 
 def generate_df(targets):
