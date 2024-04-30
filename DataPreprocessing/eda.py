@@ -51,10 +51,12 @@ def box_plots(df):
         plt.tight_layout()
         plt.savefig('DataPreprocessing/' + i + '_Boxplot.png')
 
-if __name__ == '__main__':
+def main():
     df = pd.read_csv('bonds.csv', low_memory=False)
     #plot_column(df, ['Price', 'R1M','R3M','R6M','R12M'])
     #plot_seasonal(df)
     plot_distribution(df.drop(columns=['Date']))
     box_plots(df.drop(columns=['ISIN', 'Date']))
 
+if __name__ == '__main__':
+    main()

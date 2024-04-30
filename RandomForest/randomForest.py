@@ -33,7 +33,7 @@ def random_forest(X, y, model):
     
     plt.figure()
     plt.title("Feature importances " + y.name + " returns")
-    plt.barh(X.columns, coefs, color="r", align="center")
+    plt.barh(X.columns, coefs, align="center")
     plt.xlabel("Feature importance")
     plt.ylabel("Feature")
     plt.tight_layout()
@@ -102,7 +102,7 @@ def best_estimator(X, y):
 
     return best_model
 
-if __name__ == "__main__":
+def main():
     returns = ['R1M', 'R3M', 'R6M', 'R12M']
     results = pd.DataFrame(columns=['Target', 'MSE', 'R2', 'Hit Ratio'])
 
@@ -126,4 +126,7 @@ if __name__ == "__main__":
         results = results._append({'Target': i, 'MSE': mse, 'R2': r2, 'Hit Ratio': hit_ratio}, ignore_index=True)
     results.to_csv('RandomForest/results_dt.csv', index=False)
 
+
+if __name__ == "__main__":
+    main()
         

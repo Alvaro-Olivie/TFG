@@ -6,8 +6,6 @@ from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import GridSearchCV
 
-data = pd.read_csv('bonds.csv', low_memory=False)
-
 def xgboost(X, y, params):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -34,7 +32,7 @@ def xgboost(X, y, params):
     
     plt.figure()
     plt.title("Feature importances " + y.name + " returns")
-    plt.barh(X.columns, coefs, color="r", align="center")
+    plt.barh(X.columns, coefs, align="center")
     plt.xlabel("Feature importance")
     plt.ylabel("Feature")
     plt.tight_layout()
@@ -70,7 +68,8 @@ def best_params(X, y):
     
     return grid.best_params_
 
-if __name__ == "__main__":
+def main():
+    data = pd.read_csv('bonds.csv', low_memory=False)
     returns = ['R1M', 'R3M', 'R6M', 'R12M']
     results = pd.DataFrame(columns=['Target', 'MSE', 'R2', 'Hit Ratio'])
 
@@ -81,4 +80,7 @@ if __name__ == "__main__":
         params = best_params(x, y)
         mse, r2, hit_ratio = xgboost(x, y, params)
         results = results._append({'Target': i, 'MSE': mse, 'R2': r2, 'Hit Ratio': hit_ratio}, ignore_index=True)
-    results.to_csv('XGBoost/results.csv', index=False)
+    results.to_csv('GradientBoosting/results.csv', index=False)
+
+if __name__ == "__main__":
+   main()

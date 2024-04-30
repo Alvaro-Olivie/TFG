@@ -10,22 +10,29 @@ def linear_regression(X, y):
     X_scaled = preprocessing.scale(X)
     X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
+    print("  starting to train model...")
+
     model = LinearRegression()
 
     model.fit(X_train, y_train)
 
+    print("  model trained")
+
     y_pred = model.predict(X_test)
-    
+
+    print("  model predicted")
 
     mse = mean_squared_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
     hit_ratio = (y_test * y_pred > 0).mean()
 
+    print("  metrics calculated")
+
     coefs = pd.Series(abs(model.coef_))
 
     plt.figure(figsize=(12, 8))
     plt.title("Feature importances " + y.name + " returns")
-    plt.barh(X.columns, coefs, color="b", align="center")
+    plt.barh(X.columns, coefs, align="center")
     plt.xlabel("Feature importance")
     plt.ylabel("Feature")
     plt.tight_layout() 
@@ -42,7 +49,9 @@ def lasso_regression(X, y_penalized):
     X_penalized = preprocessing.scale(X.values)
     n_alphas = 50 # declare the number of alphas for ridge
     alphas = np.logspace(-4,-2,n_alphas) # here alpha is used for lambda in scikit-learn
-    lasso_res = {} # declaring the dict that will receive the model's result 
+    lasso_res = {} # declaring the dict that will receive the model's 
+
+    print("Starting to process Lasso Regression for " + y_penalized.name) 
 
     for alpha in alphas: # looping through the different alphas/lambdas values
         lasso = Lasso(alpha=alpha) # model
@@ -63,6 +72,7 @@ def lasso_regression(X, y_penalized):
     plt.savefig("Regression/lasso_values_" + y_penalized.name + ".png", format="png")
     plt.close()
 
+    print("  Lasso Regression for " + y_penalized.name + " returns processed")
     
 
 def ridge_regression(X, y_penalized):
@@ -70,6 +80,8 @@ def ridge_regression(X, y_penalized):
     n_alphas = 50 # declare the number of alphas for ridge
     alphas = np.logspace(-2, 5, n_alphas) # transforming into log for Aspect ratio 
     ridge_res = {} # declaring the dict that will receive the model's result 
+
+    print("Starting to process Ridge Regression for " + y_penalized.name)
 
     for alpha in alphas: # looping through the different alphas/lambdas values
         ridge = Ridge(alpha=alpha) # model
@@ -89,13 +101,15 @@ def ridge_regression(X, y_penalized):
     plt.savefig("Regression/ridge_values_" + y_penalized.name + ".png", format="png")
     plt.close()
 
+    print("  Ridge Regression for " + y_penalized.name + " returns processed")
 
-if __name__ == '__main__':
+def main():
     data = pd.read_csv('bonds.csv', low_memory=False)
     returns = ['R1M', 'R3M', 'R6M', 'R12M']
     results = pd.DataFrame(columns=['Target', 'MSE', 'R2', 'Hit Ratio'])
 
     for i in returns:
+        print("Starting to process " + i)
         y = data[i]
         x = data.select_dtypes(include='number').drop(returns, axis=1)
         
@@ -107,6 +121,8 @@ if __name__ == '__main__':
 
     results.to_csv('Regression/results.csv', index=False)
 
+if __name__ == '__main__':
+    main()
 
 
         

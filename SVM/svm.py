@@ -3,14 +3,12 @@ from sklearn import svm
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
-from mpl_toolkits.mplot3d import Axes3D
-
-data = pd.read_csv('bonds.csv', low_memory=False)
+from sklearn import preprocessing
 
 def svm_model(X, y):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_scaled = preprocessing.scale(X)
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
     print("  starting to train model...")
 
@@ -46,8 +44,8 @@ def svm_model(X, y):
     
     return mse, r2, hit_ratio
     
-
-if __name__ == "__main__":
+def main():
+    data = pd.read_csv('bonds.csv', low_memory=False)
     returns = ['R1M', 'R3M', 'R6M', 'R12M']
     results = pd.DataFrame(columns=['Target', 'MSE', 'R2', 'Hit Ratio'])
 
@@ -58,3 +56,6 @@ if __name__ == "__main__":
         mse, r2, hit_ratio = svm_model(x, y)
         results = results._append({'Target': i, 'MSE': mse, 'R2': r2, 'Hit Ratio': hit_ratio}, ignore_index=True)
     results.to_csv('SVM/results.csv', index=False)
+
+if __name__ == "__main__":
+    main()
