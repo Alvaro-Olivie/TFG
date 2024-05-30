@@ -44,7 +44,7 @@ def categorical_to_numeric(data):
     data['BCLASS 2'] = data['BCLASS 2'].map({'FINANCIAL_INSTITUTIONS': 1, 'INDUSTRIAL': 2, 'UTILITY': 3})
     return data
 
-def calculate_returns(data):
+def calculate_returns(data):    
     data = data.sort_values(['ISIN', 'Date'])
     data['R1M'] = data.groupby('ISIN')['Price'].pct_change()
     data['R1M'] = data.groupby('ISIN')['R1M'].shift(-1)
@@ -92,15 +92,15 @@ def main():
         print(i)
     data = pd.concat(dfs, ignore_index=True)
     data = clean_data(data)
-    plot_categorical_distribution(data, ['Index Rating (String)', 'BCLASS 2', 'Payment Rank'])
-    data = categorical_to_numeric(data)
-    data = calculate_returns(data)
-    feature_correlation(data.drop(columns=['ISIN', 'Date']))
+    #plot_categorical_distribution(data, ['Index Rating (String)', 'BCLASS 2', 'Payment Rank'])
+    #data = categorical_to_numeric(data)
+    #data = calculate_returns(data)
+    #feature_correlation(data.drop(columns=['ISIN', 'Date']))
 
     #high correlation with YTW, Par Val and OAD
-    data = data.drop(columns=['YTW', 'Par Val', 'OAD'])
+    #data = data.drop(columns=['YTW', 'Par Val', 'OAD'])
 
-    data.to_csv('bonds.csv', index=False)
+    data.to_csv('bonds_not_clean.csv', index=False)
 
 if __name__ == "__main__":
     main()

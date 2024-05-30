@@ -53,8 +53,8 @@ def box_plots(df):
 
 def main():
     df = pd.read_csv('bonds.csv', low_memory=False)
-    #plot_column(df, ['Price', 'R1M','R3M','R6M','R12M'])
-    #plot_seasonal(df)
+    plot_column(df, ['Price', 'R1M','R3M','R6M','R12M'])
+    plot_seasonal(df)
     plot_distribution(df.drop(columns=['Date']))
     box_plots(df.drop(columns=['ISIN', 'Date']))
 
