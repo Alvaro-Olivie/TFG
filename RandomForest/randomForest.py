@@ -91,7 +91,6 @@ def best_estimator(X, y):
     print("  looking for best model...")
     
     params_grid = {
-        'n_estimators': [100, 200, 300],
         'max_features': ['sqrt', 'log2'],
         'max_depth': [3, 5, 7, 9],
         'min_samples_split': [2, 4, 6, 8],

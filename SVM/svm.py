@@ -16,8 +16,8 @@ def svm_model(X, y):
     model = svm.SVR()
     
     params = {
-        'C': [0.1, 1, 10, 100, 1000],
-        'epsilon': [0.1, 0.2, 0.3, 0.4, 0.5],
+        'C': [0.1, 1, 10, 100],
+        'epsilon': [0.01, 0.05, 0.1],
         'gamma': ['scale', 'auto']
     }
     
@@ -49,6 +49,8 @@ def svm_model(X, y):
 
     y_pred = pd.Series(y_pred)
     y_pred.to_csv('SVM/y_pred_'+y.name+'.csv', index=False)
+
+    print(grid_search.best_params_)
     
     return mse, r2, hit_ratio
     
