@@ -65,6 +65,7 @@ def nn_ensamble(X, y):
     plt.savefig('Ensemble/scatter_'+ y.name +'.png')
     plt.close()
 
+    model.save('Ensemble/model'+y.name+'.h5')
 
     return mse, r2, hit_ratio
 

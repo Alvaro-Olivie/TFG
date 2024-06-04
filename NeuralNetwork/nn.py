@@ -74,6 +74,8 @@ def nn(X, y):
 
     y_pred = pd.Series(y_pred)
     y_pred.to_csv('NeuralNetwork/y_pred_'+y.name+'.csv', index=False)
+
+    model.save('NeuralNetwork/model'+y.name+'.h5')
     
     return mse, r2, hit_ratio
 
@@ -81,7 +83,7 @@ def main():
     returns = ['R1M', 'R3M', 'R6M', 'R12M']
     results = pd.DataFrame(columns=['Target', 'MSE', 'R2', 'Hit Ratio'])
 
-    data = pd.read_csv('bonds.csv', low_memory=False)
+    data = pd.read_csv('test_bonds.csv', low_memory=False)
     
     for i in returns:
         print("Starting to process " + i)

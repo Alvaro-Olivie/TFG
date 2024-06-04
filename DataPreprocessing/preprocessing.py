@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
 import matplotlib.pyplot as plt
 
 def read_excel_sheets(path):
@@ -25,6 +26,9 @@ def read_excel_sheets(path):
 def clean_data(data):
     data['Payment Rank'] = data['Payment rank'].fillna(data['payment rank'])
     data = data.drop(columns=['Payment rank', 'payment rank'])
+    data = data[data['Payment Rank'] != '#N/A Mandatory parameter [SECURITY] cannot be empty']
+    data = data[data['Payment Rank'] != '#N/A Requesting Data...']
+    data['Payment Rank'] = data['Payment Rank'].astype(str)
     data['ISIN'] = data['ISIN'].fillna(data['Unnamed: 0'])
     data = data.drop(columns=['Unnamed: 0'])
     data['Cpn'] = data['Cpn'].fillna(data['Coupon'])
@@ -35,13 +39,14 @@ def clean_data(data):
     return data
 
 def categorical_to_numeric(data):
-    data = data[data['Payment Rank'].str.contains('1st lien', na=False)]
+    data = data[data['Payment Rank'].str.contains('Sr Unsecured', na=False)]
     data = data.drop(columns=['Payment Rank'])
-    data['Index Rating (String)'] = data['Index Rating (String)'].replace(['A2', 'A3', 'BAA3', 'BAA1', 'BAA2', 'AA3', 'A1', 'AA2',  'AA1', 'AAA'], 'Investment Grade')
-    data['Index Rating (String)'] = data['Index Rating (String)'].replace(['BA3', 'B3','BA1', 'B1', 'BA2', 'CAA1', 'CAA2', 'CAA3', 'NR', 'CA', 'D', 'C', 'B2'], 'High Yield')
-    data['Index Rating (String)'] = data['Index Rating (String)'].map({'Investment Grade': 1, 'High Yield': 0})
+    data['BCLASS 2'] = data['BCLASS 2'].apply(lambda x: x if x in ['INDUSTRIAL', 'FINANCIAL_INSTITUTIONS', 'UTILITY'] else np.nan)
+    data = data.dropna(subset=['BCLASS 2'])
+    le = LabelEncoder()
+    data['Index Rating (String)'] = le.fit_transform(data['Index Rating (String)'])
     data = data.rename(columns={'Index Rating (String)': 'Index Rating'})
-    data['BCLASS 2'] = data['BCLASS 2'].map({'FINANCIAL_INSTITUTIONS': 1, 'INDUSTRIAL': 2, 'UTILITY': 3})
+    data['BCLASS 2'] = le.fit_transform(data['BCLASS 2'])
     return data
 
 def calculate_returns(data):    
@@ -57,17 +62,16 @@ def calculate_returns(data):
     return data.replace([np.inf, -np.inf], np.nan).dropna()
 
 def plot_categorical_distribution(df, column):
-    df.drop_duplicates(subset='ISIN', keep='first', inplace=True)
+    df = df.drop_duplicates(subset='ISIN', keep='first')
     for i in column:
-        Fig, ax = plt.subplots(figsize=(10, 4))
-        df[i].hist(ax=ax)
-        ax.set_ylabel('Frequency')
-        ax.set_xlabel(i)
-        ax.set_xticks(range(len(df[i].unique())))
-        ax.set_xticklabels(sorted(df[i].unique()), rotation=60)
-        ax.set_title(i + ' Distribution')
+        plt.hist(df[i])
+        plt.xlabel('')
+        plt.ylabel('Frequency')
+        plt.title('Histogram of ' + i)
+        plt.xticks(rotation=60)
         plt.tight_layout()
         plt.savefig('DataPreprocessing/' + i + '_Distribution.png')
+        plt.close()
 
 def feature_correlation(df):
     correlation = df.corr()
@@ -92,15 +96,22 @@ def main():
         print(i)
     data = pd.concat(dfs, ignore_index=True)
     data = clean_data(data)
-    #plot_categorical_distribution(data, ['Index Rating (String)', 'BCLASS 2', 'Payment Rank'])
-    #data = categorical_to_numeric(data)
-    #data = calculate_returns(data)
-    #feature_correlation(data.drop(columns=['ISIN', 'Date']))
+    plot_categorical_distribution(data, ['Index Rating (String)', 'BCLASS 2', 'Payment Rank'])
+    data = categorical_to_numeric(data)
+    data = calculate_returns(data)
+    feature_correlation(data.drop(columns=['ISIN', 'Date']))
 
     #high correlation with YTW, Par Val and OAD
-    #data = data.drop(columns=['YTW', 'Par Val', 'OAD'])
+    data = data.drop(columns=['YTW', 'Par Val', 'OAD'])
 
-    data.to_csv('bonds_not_clean.csv', index=False)
+    data.to_csv('bonds.csv', index=False)
+
+    # Split the data by date
+    last_year_data = data[data['Date'] >= data['Date'].max() - pd.DateOffset(years=1)]
+    remaining_data = data[data['Date'] < data['Date'].max() - pd.DateOffset(years=1)]
+
+    last_year_data.to_csv('test_bonds.csv', index=False)
+    remaining_data.to_csv('train_bonds.csv', index=False)
 
 if __name__ == "__main__":
     main()

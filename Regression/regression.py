@@ -5,6 +5,7 @@ from sklearn import preprocessing
 from sklearn.linear_model import LinearRegression, Lasso, ElasticNet, Ridge
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
+import joblib
 
 def linear_regression(X, y):
     X_scaled = preprocessing.scale(X)
@@ -48,6 +49,9 @@ def linear_regression(X, y):
 
     y_pred = pd.Series(y_pred)
     y_pred.to_csv('Regression/y_pred_'+y.name+'.csv', index=False)
+
+    # Store the trained model
+    joblib.dump(model, 'Regression/model'+y.name+'.pkl')
 
     return mse, r2, hit_ratio
 
@@ -111,7 +115,7 @@ def ridge_regression(X, y_penalized):
     print("  Ridge Regression for " + y_penalized.name + " returns processed")
 
 def main():
-    data = pd.read_csv('bonds.csv', low_memory=False)
+    data = pd.read_csv('test_bonds.csv', low_memory=False)
     returns = ['R1M', 'R3M', 'R6M', 'R12M']
     results = pd.DataFrame(columns=['Target', 'MSE', 'R2', 'Hit Ratio'])
 

@@ -7,8 +7,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn import tree
 from sklearn.model_selection import GridSearchCV
-
-data = pd.read_csv('bonds.csv', low_memory=False)
+import joblib
 
 def random_forest(X, y, model):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -49,6 +48,8 @@ def random_forest(X, y, model):
 
     y_pred = pd.Series(y_pred)
     y_pred.to_csv('RandomForest/y_pred_'+y.name+'.csv', index=False)
+
+    joblib.dump(model, 'RandomForest/model'+y.name+'.pkl')
     
     return mse, r2, hit_ratio
 
@@ -97,7 +98,7 @@ def best_estimator(X, y):
         'min_samples_leaf': [1, 2, 3, 4]
     }
 
-    model = RandomForestRegressor(random_state=42, n_jobs=-1)
+    model = RandomForestRegressor(random_state=42, n_jobs=1)
 
     grid_search = GridSearchCV(estimator=model, param_grid=params_grid, cv=3, scoring='neg_mean_squared_error')
     grid_search.fit(X_train, y_train)
@@ -109,6 +110,8 @@ def best_estimator(X, y):
     return best_model
 
 def main():
+    data = pd.read_csv('test_bonds.csv', low_memory=False)
+    data = data.sample(frac=0.2, random_state=42)
     returns = ['R1M', 'R3M', 'R6M', 'R12M']
     results = pd.DataFrame(columns=['Target', 'MSE', 'R2', 'Hit Ratio'])
 

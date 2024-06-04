@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import GridSearchCV
+import joblib
 
 def xgboost(X, y, params):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -48,6 +49,9 @@ def xgboost(X, y, params):
 
     y_pred = pd.Series(y_pred)
     y_pred.to_csv('GradientBoosting/y_pred_'+y.name+'.csv', index=False)
+
+    # Store the trained model
+    joblib.dump(model, 'GradientBoosting/model'+y.name+'.pkl')
     
     return mse, r2, hit_ratio
 
@@ -76,7 +80,8 @@ def best_params(X, y):
     return grid.best_params_
 
 def main():
-    data = pd.read_csv('bonds.csv', low_memory=False)
+    data = pd.read_csv('test_bonds.csv', low_memory=False)
+    data = data.sample(frac=0.2, random_state=42)
     returns = ['R1M', 'R3M', 'R6M', 'R12M']
     results = pd.DataFrame(columns=['Target', 'MSE', 'R2', 'Hit Ratio'])
 

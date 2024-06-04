@@ -3,6 +3,8 @@
 *.docs
 bonds.csv
 bonds_not_clean.csv
+test_bonds.csv
+train_bonds.csv
 *.pdf
 *.mp4
 .conda
