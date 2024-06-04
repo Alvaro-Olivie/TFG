@@ -19,7 +19,7 @@ def nn_ensamble(X, y):
     model = Sequential()
     model.add(Input(shape=(X_train.shape[1],)))
     model.add(Dense(64, activation='relu'))
-    model.add(Dense(32, activation='tanh'))
+    model.add(Dense(32, activation='relu'))
     model.add(Dense(1))
 
     model.compile(optimizer='adam', loss='mse', metrics=['r2_score'])

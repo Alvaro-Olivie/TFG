@@ -19,7 +19,7 @@ def nn(X, y):
     model.add(Input(shape=(X_train.shape[1],)))
     model.add(Dense(64, activation='relu'))
     model.add(Dropout(0.2))
-    model.add(Dense(32, activation='tanh'))
+    model.add(Dense(32, activation='relu'))
     model.add(Dense(1))
     
 
