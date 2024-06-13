@@ -4,9 +4,18 @@ from RandomForest import randomForest
 from GradientBoosting import xg_boost
 from NeuralNetwork import nn
 from Ensemble import ensemble
+from Portfolio import portfolio_R1M
 
-#regression.main()
-#svm.main()
+try:
+    regression.main()
+except Exception as e:
+    print(f"Error in regression: {e}")
+
+try:
+    svm.main()
+except Exception as e:
+    print(f"Error in SVR: {e}")
+
 try:
     randomForest.main()
 except Exception as e:
@@ -27,5 +36,7 @@ try:
 except Exception as e:
     print(f"Error in ensemble: {e}")
 
+
+portfolio_R1M.main()
 
 

@@ -75,7 +75,7 @@ def nn(X, y):
     y_pred = pd.Series(y_pred)
     y_pred.to_csv('NeuralNetwork/y_pred_'+y.name+'.csv', index=False)
 
-    model.save('NeuralNetwork/model'+y.name+'.h5')
+    #model.save('NeuralNetwork/model'+y.name+'.h5')
     
     return mse, r2, hit_ratio
 

@@ -18,6 +18,7 @@ def regression(data):
         X_scaled = preprocessing.scale(X)
         y_pred = reg.predict(X_scaled)
         top_predictions_index = y_pred.argsort()[-int(len(y_pred) * 0.15):]
+
         top_predictions_data = month_data.iloc[top_predictions_index]
         results = pd.concat([results, top_predictions_data], ignore_index=True)
     return results
@@ -95,6 +96,7 @@ def neuralNetwork(data):
 def plot_cumulative_returns(df, label):
     cumulative_return = (1 + df['R1M']).cumprod() * 100
     cumulative_return.plot(label=label)
+    return cumulative_return
 
 def main():
     data = pd.read_csv('test_bonds.csv')
@@ -129,23 +131,31 @@ def main():
     plt.ylabel('R1M')
     plt.title('Average R1M by Date')
     plt.legend()
-    plt.savefig("average_R1M.png", format="png")
+    plt.savefig("Portfolio/average_R1M.png", format="png")
     plt.close()
 
     # Plot cumulative returns assuming a $100 investment
     plt.figure(figsize=(10, 6))
-    plot_cumulative_returns(market_returns, 'Market')
-    plot_cumulative_returns(reg.groupby('Date')['R1M'].mean().reset_index(), 'LR')
-    plot_cumulative_returns(svm_model.groupby('Date')['R1M'].mean().reset_index(), 'SVR')
-    plot_cumulative_returns(rf.groupby('Date')['R1M'].mean().reset_index(), 'RF')
-    plot_cumulative_returns(gb.groupby('Date')['R1M'].mean().reset_index(), 'GB')
-    plot_cumulative_returns(nn.groupby('Date')['R1M'].mean().reset_index(), 'NN')
+    market_cumulative = plot_cumulative_returns(market_returns, 'Market')
+    reg_cumulative = plot_cumulative_returns(reg.groupby('Date')['R1M'].mean().reset_index(), 'LR')
+    svm_cumulative = plot_cumulative_returns(svm_model.groupby('Date')['R1M'].mean().reset_index(), 'SVR')
+    rf_cumulative = plot_cumulative_returns(rf.groupby('Date')['R1M'].mean().reset_index(), 'RF')
+    gb_cumulative = plot_cumulative_returns(gb.groupby('Date')['R1M'].mean().reset_index(), 'GB')
+    nn_cumulative = plot_cumulative_returns(nn.groupby('Date')['R1M'].mean().reset_index(), 'NN')
     plt.xlabel('Date')
     plt.ylabel('Cumulative Return ($)')
     plt.title('Cumulative Returns of Investment')
     plt.legend()
-    plt.savefig("cumulative_returns_R1M.png", format="png")
+    plt.savefig("Portfolio/cumulative_returns_R1M.png", format="png")
     plt.close()
+
+    # Print last values of cumulative returns
+    print(f"Market final cumulative return: ${market_cumulative.iloc[-1]:.2f}")
+    print(f"Linear Regression final cumulative return: ${reg_cumulative.iloc[-1]:.2f}")
+    print(f"SVM final cumulative return: ${svm_cumulative.iloc[-1]:.2f}")
+    print(f"Random Forest final cumulative return: ${rf_cumulative.iloc[-1]:.2f}")
+    print(f"Gradient Boosting final cumulative return: ${gb_cumulative.iloc[-1]:.2f}")
+    print(f"Neural Network final cumulative return: ${nn_cumulative.iloc[-1]:.2f}")
 
 if __name__ == '__main__':
     main()
