@@ -4,15 +4,15 @@
 ### Author: Álvaro Olivié Molina
 
 ## Description
-This project aims to develop and validate models that can predict bond price changes over various horizons (1, 3, 6, and 12 months) using machine learning methods. The main file (`main.py`) orchestrates the execution of all models.
+This project aims to develop and validate models that can predict bond price changes over various horizons (1, 3, 6, and 12 months) using machine learning methods. The main file (`main.py`) orchestrates the execution of all models as well as a simple portfolio simulation.
 
 ## Directory Overview
-- **Data:** Contains raw and processed datasets.
-- **DataPreprocessing:** Scripts for data cleaning and preprocessing.
+- **Data:** Contains raw and processed datasets in Excel format.
+- **DataPreprocessing:** Script for data cleaning and preprocessing.
 - **Ensemble:** Implementation of ensemble models.
-- **GradientBoosting:** Contains models and scripts related to Gradient Boosting.
+- **GradientBoosting:** Contains models and script related to Gradient Boosting.
 - **NeuralNetwork:** Implements neural network models.
-- **Portfolio:** Scripts for portfolio construction based on model predictions.
+- **Portfolio:** Script for portfolio construction based on model predictions.
 - **RandomForest:** Implements Random Forest models.
 - **Regression:** Implements various regression models.
 - **SVM:** Implements Support Vector Machine models.
@@ -41,7 +41,7 @@ This project aims to develop and validate models that can predict bond price cha
 - **train_bonds.csv:** Training dataset.
 - **test_bonds.csv:** Testing dataset.
 
-These are have not been uploaded as they are not publically available
+These are have not been uploaded as they are not publically available but are referenced in the code. The same has been done for the original Excel files
 
 ## License
-This project is licensed under the terms specified in the `LICENSE` file.
+This project is licensed under the Apache License.
