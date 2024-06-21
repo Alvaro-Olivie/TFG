@@ -44,4 +44,4 @@ This project aims to develop and validate models that can predict bond price cha
 These are have not been uploaded as they are not publically available but are referenced in the code. The same has been done for the original Excel files
 
 ## License
-This project is licensed under the Apache License.
+This project is licensed under the license referenced in the LICENSE file.
